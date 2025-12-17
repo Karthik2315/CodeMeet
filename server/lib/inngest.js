@@ -1,5 +1,5 @@
 import { Inngest } from "inngest";
-import User from "../models/userModal";
+import User from "../models/userModal.js";
 
 
 export const inngest = new Inngest({ id: "code-meet" });
