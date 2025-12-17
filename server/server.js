@@ -7,13 +7,14 @@ import { functions, inngest } from './lib/inngest.js';
 
 const app = express();
 const PORT = ENV.PORT || 5000;
-app.use("/api/inngest",serve({client:inngest,functions:functions}));
 
 app.use(cors({
   origin:ENV.CLIENT_URL,
   credentials:true
 }));
 app.use(express.json());
+app.use("/api/inngest", serve({ client: inngest, functions }));
+
 await connectDB();
 app.get('/',(req,res)=>{
   res.json({
