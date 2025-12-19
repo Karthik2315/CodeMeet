@@ -14,6 +14,10 @@ const App = () => {
           <button>Sign In</button>
         </SignInButton>
       </SignedOut>
+      <SignedIn>
+        <UserButton />
+      </SignedIn>
+      
     </div>
   );
 };
