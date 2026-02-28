@@ -2,13 +2,14 @@ import { ChatClient, streamClient } from "../lib/stream.js";
 import Session from "../models/sessionModal.js";
 
 export const createSession = async(req,res) => {
+  let session;
   try {
     const {problem,difficulty} = req.body;
     const userId = req.user._id;
     const clerkId = req.user.clerkId;
     if(!problem || !difficulty) return res.status(400).json({success:false,message:"No details about problem"});
     const callId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`
-    const session = await Session.create({
+    session = await Session.create({
       problem,
       difficulty,
       host:userId,
@@ -32,6 +33,9 @@ export const createSession = async(req,res) => {
       session
     })
   } catch (error) {
+    if(session){
+      await Session.findByIdAndDelete(session._id);
+    }
     console.error(error);
     res.status(500).json({
       success:false,
@@ -100,8 +104,9 @@ export const joinSession = async(req,res) => {
     const userId = req.user._id;
     const clerkId = req.user.clerkId;
     const session = await Session.findById(id);
-    if(!session) res.status(404).json({success:false,message:"Session not found"});
-    if(session.participant) res.status(400).json({success:false,message:"Session is full"});
+    if(!session) return  res.status(404).json({success:false,message:"Session not found"});
+    if(session.status !== "Active") return res.status(400).json({success:false,message:"You cannont join a completed session"});
+    if(session.participant) return res.status(400).json({success:false,message:"Session is full"});
     session.participant = userId;
     await session.save();
     const channel = ChatClient.channel("messaging",session.callId);

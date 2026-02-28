@@ -1,4 +1,4 @@
-import { ChatClient } from "../lib/stream"
+import { ChatClient } from "../lib/stream.js"
 
 
 export const getStreamToken = async(req,res) => {
