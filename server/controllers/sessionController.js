@@ -94,8 +94,6 @@ export const getSessionById = async(req,res) => {
   }
 }
 
-
-
 export const joinSession = async(req,res) => {
   try {
     const {id} = req.params;
@@ -106,6 +104,36 @@ export const joinSession = async(req,res) => {
     if(session.participant) res.status(400).json({success:false,message:"Session is full"});
     session.participant = userId;
     await session.save();
+    const channel = ChatClient.channel("messaging",session.callId);
+    await channel.addMembers([clerkId]);
+    res.status(200).json({
+      success:true,
+      messsage:"Joined the session",
+      session
+    })
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success:false,
+      message:"Internal Server Error"
+    })
+  }
+}
+
+export const endSession = async(req,res) => {
+  try {
+    const {id} = req.params
+    const userId = req.user._id;
+    const session = await Session.findById(id);
+    if(!session)  return res.staus(404).json({success:false,message:"Invalid session id"});
+    if(session.host.toString() !== userId) return res.status(403).json({success:false,message:"User is not authorized"});
+    if(session.status === "Completed") return res.status(400).json({success:false,message:"Session is already completed"});
+    session.status = "Completed";
+    await session.save();
+    const call = streamClient.video.call("default",session.callId);
+    await call.delete({hard:true});
+    const channel = ChatClient.channel("messaging",session.callId);
+    await channel.delete();
   } catch (error) {
     console.error(error);
     res.status(500).json({
