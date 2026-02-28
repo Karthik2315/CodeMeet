@@ -95,6 +95,7 @@ export const getSessionById = async(req,res) => {
 }
 
 
+
 export const joinSession = async(req,res) => {
   try {
     const {id} = req.params;
