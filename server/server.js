@@ -7,9 +7,10 @@ import { functions, inngest } from './lib/inngest.js';
 import { clerkMiddleware } from '@clerk/express'
 import sessionRoute from './routes/sessionRoute.js';
 import ChatRouter from './routes/chatRoute.js';
-
+import helmet from "helmet";
 
 const app = express();
+app.use(helmet());
 const PORT = ENV.PORT || 5000;
 
 app.use(cors({
