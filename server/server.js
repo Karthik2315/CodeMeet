@@ -5,6 +5,7 @@ import cors from 'cors';
 import {serve} from 'inngest/express'
 import { functions, inngest } from './lib/inngest.js';
 import { clerkMiddleware } from '@clerk/express'
+import sessionRoute from './routes/sessionRoute.js';
 
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(clerkMiddleware())
 
 app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/chat",chatRoute)
+app.use("/api/sessions",sessionRoute)
 
 await connectDB();
 app.get('/',(req,res)=>{
