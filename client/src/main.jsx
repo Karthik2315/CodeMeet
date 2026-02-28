@@ -23,9 +23,7 @@ createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
       <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <App />
       </ClerkProvider> 
     </QueryClientProvider>
   </BrowserRouter> 
